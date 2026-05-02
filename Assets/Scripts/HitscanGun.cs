@@ -30,6 +30,7 @@ public class HitscanGun : MonoBehaviour
 
     private float nextTimeToFire = 0f;
     private bool isGunActive = false;
+    public ParticleSystem muzzleFlash;
 
     void Start()
     {
@@ -74,6 +75,11 @@ public class HitscanGun : MonoBehaviour
 
         if (shootSFX && audioSource)
             audioSource.PlayOneShot(shootSFX);
+
+        if (muzzleFlash != null)
+        {
+            muzzleFlash.Play();
+        }
 
         Ray ray = new Ray(playerCamera.transform.position, playerCamera.transform.forward);
         RaycastHit hit;

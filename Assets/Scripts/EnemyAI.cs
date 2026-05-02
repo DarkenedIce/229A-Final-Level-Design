@@ -17,12 +17,17 @@ public class EnemyAI : MonoBehaviour
     private NavMeshAgent agent;
     private bool isAlerted = false;
 
-    private float alertTimer = 0f;
-    public float alertDuration = 5f;
-
     [Header("Vision")]
     public Transform eyePoint;
     public LayerMask visionMask;
+
+    [Header("Audio")]
+    public AudioSource audioSource;
+
+    public AudioClip detectSFX;
+    public AudioClip hurtSFX;
+    public AudioClip attackSFX;
+    public AudioClip deathSFX;
 
     void Start()
     {
@@ -42,8 +47,10 @@ public class EnemyAI : MonoBehaviour
 
             if (HasLineOfSight())
             {
-                Debug.Log("Line of sight TRUE");
                 isAlerted = true;
+
+                if (detectSFX && audioSource)
+                    audioSource.PlayOneShot(detectSFX);
             }
             else
             {
@@ -99,9 +106,14 @@ public class EnemyAI : MonoBehaviour
         {
             nextAttackTime = Time.time + 1f / attackRate;
 
+            if (attackSFX && audioSource)
+                audioSource.PlayOneShot(attackSFX);
+
             PlayerHealth ph = player.GetComponent<PlayerHealth>();
             if (ph != null)
+            {
                 ph.TakeDamage(damage);
+            }
         }
     }
 
@@ -109,16 +121,22 @@ public class EnemyAI : MonoBehaviour
     {
         currentHP -= amount;
 
-        // 🔥 IMPORTANT: alert enemy when shot
         isAlerted = true;
-        alertTimer = alertDuration;
 
-        if (currentHP <= 0)
+        if (hurtSFX && audioSource)
+            audioSource.PlayOneShot(hurtSFX);
+
+        if (currentHP <= 0f)
+        {
             Die();
+        }
     }
 
     void Die()
     {
-        Destroy(gameObject);
+        if (deathSFX && audioSource)
+            audioSource.PlayOneShot(deathSFX);
+
+        Destroy(gameObject, 0.2f); // small delay so sound plays
     }
 }

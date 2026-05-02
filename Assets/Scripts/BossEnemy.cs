@@ -21,6 +21,14 @@ public class BossEnemy : MonoBehaviour
     public Transform eyePoint;
     public LayerMask visionMask;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+
+    public AudioClip detectSFX;
+    public AudioClip hurtSFX;
+    public AudioClip attackSFX;
+    public AudioClip deathSFX;
+
     private float nextAttackTime = 0f;
     private bool isAlerted = false;
 
@@ -50,7 +58,13 @@ public class BossEnemy : MonoBehaviour
             if (HasLineOfSight())
             {
                 isAlerted = true;
-                Debug.Log("Boss spotted player!");
+
+                if (detectSFX && audioSource)
+                    audioSource.PlayOneShot(detectSFX);
+            }
+            else
+            {
+                Debug.Log("Line of sight FALSE");
             }
         }
 
@@ -104,6 +118,9 @@ public class BossEnemy : MonoBehaviour
         {
             nextAttackTime = Time.time + 1f / attackRate;
 
+            if (attackSFX && audioSource)
+                audioSource.PlayOneShot(attackSFX);
+
             PlayerHealth ph = player.GetComponent<PlayerHealth>();
             if (ph != null)
             {
@@ -116,8 +133,10 @@ public class BossEnemy : MonoBehaviour
     {
         currentHP -= amount;
 
-        // 🔥 Become alerted when shot
         isAlerted = true;
+
+        if (hurtSFX && audioSource)
+            audioSource.PlayOneShot(hurtSFX);
 
         if (currentHP <= 0f)
         {
@@ -127,10 +146,13 @@ public class BossEnemy : MonoBehaviour
 
     void Die()
     {
-        DropItem();
-        Destroy(gameObject);
-    }
+        if (deathSFX && audioSource)
+            audioSource.PlayOneShot(deathSFX);
 
+        DropItem();
+
+        Destroy(gameObject, 0.2f); // small delay so sound plays
+    }
     void DropItem()
     {
         if (dropItemPrefab != null)

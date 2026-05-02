@@ -1,21 +1,45 @@
+using TMPro;
 using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
     public float maxHP = 100f;
+    public TMP_Text hpText;
     private float currentHP;
 
     void Start()
     {
         currentHP = maxHP;
+        UpdateUI();
     }
 
-    public void TakeDamage(float amount)
+    void UpdateUI()
+    {
+        if (hpText != null)
+        {
+            hpText.text = "HP: " + currentHP;
+        }
+
+        if (currentHP <= 30)
+        {
+            hpText.color = Color.red;
+        }
+        else
+        {
+            hpText.color = Color.green;
+        }
+    }
+
+    public void TakeDamage(int amount)
     {
         currentHP -= amount;
-        Debug.Log("Player HP: " + currentHP);
 
-        if (currentHP <= 0f)
+        if (currentHP < 0)
+            currentHP = 0;
+
+        UpdateUI();
+
+        if (currentHP <= 0)
         {
             Die();
         }
@@ -27,11 +51,13 @@ public class PlayerHealth : MonoBehaviour
 
         GetComponent<FirstPersonController>().enabled = false;
 
-        DeathScreen deathScreen = FindFirstObjectByType<DeathScreen>();
+        hpText.gameObject.SetActive(false);
 
-        if (deathScreen != null)
+        UIManager ui = FindFirstObjectByType<UIManager>();
+
+        if (ui != null)
         {
-            deathScreen.Show();
+            ui.ShowDeath();
         }
     }
 }
