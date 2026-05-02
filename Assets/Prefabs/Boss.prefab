@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 5579263510480446357}
   - component: {fileID: 2214531760380606551}
   - component: {fileID: 627815307590224122}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Boss
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -153,9 +153,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BossEnemy
   maxHP: 300
   damage: 15
+  moveSpeed: 4.5
   detectionRange: 10
   attackRange: 2.5
   attackRate: 1
+  eyePoint: {fileID: 758741151256723132}
+  visionMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
   dropItemPrefab: {fileID: 8430462438615323951, guid: c8ca2d2aae1a69948a41de7c4dcfad86, type: 3}
 --- !u!1 &7730729559248556141
 GameObject:
@@ -169,8 +174,8 @@ GameObject:
   - component: {fileID: 4523550276410528399}
   - component: {fileID: 4834619443522144069}
   - component: {fileID: 5913969428821477051}
-  m_Layer: 0
-  m_Name: Cylinder
+  m_Layer: 7
+  m_Name: Eye
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

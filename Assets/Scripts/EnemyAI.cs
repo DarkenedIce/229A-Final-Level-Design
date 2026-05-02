@@ -20,6 +20,10 @@ public class EnemyAI : MonoBehaviour
     private float alertTimer = 0f;
     public float alertDuration = 5f;
 
+    [Header("Vision")]
+    public Transform eyePoint;
+    public LayerMask visionMask;
+
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player").transform;
@@ -31,7 +35,24 @@ public class EnemyAI : MonoBehaviour
     {
         float distance = Vector3.Distance(transform.position, player.position);
 
-        if (isAlerted || distance <= detectionRange)
+        // 👁️ Detection phase (ONLY if not already alerted)
+        if (!isAlerted && distance <= detectionRange)
+        {
+            Debug.Log("Player in range");
+
+            if (HasLineOfSight())
+            {
+                Debug.Log("Line of sight TRUE");
+                isAlerted = true;
+            }
+            else
+            {
+                Debug.Log("Line of sight FALSE");
+            }
+        }
+
+        // 🔥 Alert behavior
+        if (isAlerted)
         {
             LookAtPlayer();
 
@@ -40,14 +61,25 @@ public class EnemyAI : MonoBehaviour
             else
                 Attack();
         }
+    }
 
-        if (isAlerted)
+    bool HasLineOfSight()
+    {
+        Vector3 dir = (player.position - eyePoint.position).normalized;
+        float distance = Vector3.Distance(eyePoint.position, player.position);
+
+        RaycastHit hit;
+        Debug.DrawRay(eyePoint.position, dir * distance, Color.red);
+
+        if (Physics.Raycast(eyePoint.position, dir, out hit, distance, visionMask))
         {
-            alertTimer -= Time.deltaTime;
-
-            if (alertTimer <= 0)
-                isAlerted = false;
+            if (hit.collider.CompareTag("Player"))
+            {
+                return true; // nothing blocking
+            }
         }
+
+        return false;
     }
 
     void LookAtPlayer()

@@ -27,7 +27,11 @@ public class PlayerHealth : MonoBehaviour
 
         GetComponent<FirstPersonController>().enabled = false;
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        DeathScreen deathScreen = FindFirstObjectByType<DeathScreen>();
+
+        if (deathScreen != null)
+        {
+            deathScreen.Show();
+        }
     }
 }
